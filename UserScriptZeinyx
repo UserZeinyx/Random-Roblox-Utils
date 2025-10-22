@@ -1,0 +1,227 @@
+local player = game.Players.LocalPlayer
+local hasPassID = 1548020423
+local passLink = "https://www.roblox.com/fr/game-pass/1548020423/zeinyx%20key%20-%20frneyx"
+
+-- Création du GUI principal
+local gui = Instance.new("ScreenGui")
+gui.Name = "RobloxPassGUI"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+-- Frame du bouton du pass
+local passFrame = Instance.new("Frame")
+passFrame.Size = UDim2.new(0, 250, 0, 100)
+passFrame.Position = UDim2.new(0.5, -125, 0.5, -50)
+passFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+passFrame.BorderSizePixel = 0
+passFrame.Parent = gui
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 12)
+UICorner.Parent = passFrame
+
+-- Bouton du pass
+local passButton = Instance.new("TextButton")
+passButton.Size = UDim2.new(0.8, 0, 0.5, 0)
+passButton.Position = UDim2.new(0.1, 0, 0.25, 0)
+passButton.Font = Enum.Font.Gotham
+passButton.TextSize = 20
+passButton.TextColor3 = Color3.fromRGB(255,255,255)
+passButton.BackgroundColor3 = Color3.fromRGB(60,60,60)
+passButton.Text = "..."
+passButton.Parent = passFrame
+
+local buttonCorner = Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(0, 10)
+buttonCorner.Parent = passButton
+
+-- Services
+local MarketplaceService = game:GetService("MarketplaceService")
+
+-- Vérification du Game Pass
+local function updateButton()
+    local success, hasPass = pcall(function()
+        return MarketplaceService:UserOwnsGamePassAsync(player.UserId, hasPassID)
+    end)
+    if success and hasPass then
+        passButton.Text = "Buy"
+    else
+        passButton.Text = "Copier le lien"
+    end
+end
+
+updateButton()
+
+-- Fonction pour créer le Zeinyx Hub
+local function createHub()
+    passFrame:Destroy() -- Supprime le bouton initial
+
+    local hubGui = Instance.new("ScreenGui")
+    hubGui.Name = "ZeinyxHub"
+    hubGui.ResetOnSpawn = false
+    hubGui.Parent = player:WaitForChild("PlayerGui")
+
+    local Frame = Instance.new("Frame")
+    Frame.Size = UDim2.new(0, 300, 0, 200)
+    Frame.Position = UDim2.new(0.35, 0, 0.35, 0)
+    Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    Frame.BorderSizePixel = 0
+    Frame.Active = true
+    Frame.Draggable = true
+    Frame.Parent = hubGui
+    Frame.ClipsDescendants = true
+
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0, 15)
+    UICorner.Parent = Frame
+
+    local UIGradient = Instance.new("UIGradient")
+    UIGradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(50,50,50)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(20,20,20))
+    }
+    UIGradient.Rotation = 45
+    UIGradient.Parent = Frame
+
+    local Title = Instance.new("TextLabel")
+    Title.Text = "Zeinyx"
+    Title.Font = Enum.Font.GothamBold
+    Title.TextSize = 24
+    Title.TextColor3 = Color3.fromRGB(255,255,255)
+    Title.BackgroundTransparency = 1
+    Title.Size = UDim2.new(1, -40, 0, 40)
+    Title.Position = UDim2.new(0,10,0,10)
+    Title.TextXAlignment = Enum.TextXAlignment.Left
+    Title.Parent = Frame
+
+    local CloseButton = Instance.new("TextButton")
+    CloseButton.Text = "✖"
+    CloseButton.Font = Enum.Font.GothamBold
+    CloseButton.TextSize = 20
+    CloseButton.TextColor3 = Color3.fromRGB(255,255,255)
+    CloseButton.BackgroundColor3 = Color3.fromRGB(200,50,50)
+    CloseButton.Size = UDim2.new(0,30,0,30)
+    CloseButton.Position = UDim2.new(1,-40,0,10)
+    CloseButton.AutoButtonColor = false
+    CloseButton.Parent = Frame
+
+    local CloseCorner = Instance.new("UICorner")
+    CloseCorner.CornerRadius = UDim.new(0,8)
+    CloseCorner.Parent = CloseButton
+
+    local ReopenButton = Instance.new("TextButton")
+    ReopenButton.Text = "Ouvrir Zeinyx"
+    ReopenButton.Font = Enum.Font.GothamBold
+    ReopenButton.TextSize = 20
+    ReopenButton.TextColor3 = Color3.fromRGB(255,255,255)
+    ReopenButton.BackgroundColor3 = Color3.fromRGB(40,40,40)
+    ReopenButton.Size = UDim2.new(0,200,0,40)
+    ReopenButton.Position = UDim2.new(0.5,-100,0.85,0)
+    ReopenButton.Visible = false
+    ReopenButton.Parent = hubGui
+
+    local reopenCorner = Instance.new("UICorner")
+    reopenCorner.CornerRadius = UDim.new(0,10)
+    reopenCorner.Parent = ReopenButton
+
+    local function toggleFrame(show)
+        Frame.Visible = show
+    end
+
+    CloseButton.MouseButton1Click:Connect(function()
+        toggleFrame(false)
+        ReopenButton.Visible = true
+    end)
+
+    ReopenButton.MouseButton1Click:Connect(function()
+        toggleFrame(true)
+        ReopenButton.Visible = false
+    end)
+
+    local function createButton(text, yPos)
+        local btn = Instance.new("TextButton")
+        btn.Text = text
+        btn.Font = Enum.Font.Gotham
+        btn.TextSize = 18
+        btn.TextColor3 = Color3.fromRGB(255,255,255)
+        btn.BackgroundColor3 = Color3.fromRGB(60,60,60)
+        btn.Size = UDim2.new(0.8,0,0,35)
+        btn.Position = UDim2.new(0.1,0,0,yPos)
+        btn.AutoButtonColor = false
+        btn.Parent = Frame
+
+        local corner = Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0,12)
+        corner.Parent = btn
+
+        btn.MouseEnter:Connect(function()
+            btn.BackgroundColor3 = Color3.fromRGB(80,80,80)
+        end)
+        btn.MouseLeave:Connect(function()
+            btn.BackgroundColor3 = Color3.fromRGB(60,60,60)
+        end)
+        return btn
+    end
+
+    local invisButton = createButton("Rendre Invisible", 60)
+    local spawnButton = createButton("Spawn une Part", 110)
+    local tpButton = createButton("Se téléporter à la Part", 160)
+
+    -- Logique boutons
+    local invisible = false
+    invisButton.MouseButton1Click:Connect(function()
+        local character = player.Character or player.CharacterAdded:Wait()
+        for _, part in pairs(character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.Transparency = invisible and 0 or 1
+                if part.Name == "Head" then
+                    local face = part:FindFirstChild("face")
+                    if face then face.Transparency = invisible and 0 or 1 end
+                end
+            end
+        end
+        invisible = not invisible
+        invisButton.Text = invisible and "Redevenir Visible" or "Rendre Invisible"
+    end)
+
+    local spawnedPart
+    spawnButton.MouseButton1Click:Connect(function()
+        if spawnedPart then spawnedPart:Destroy() end
+        local part = Instance.new("Part")
+        part.Size = Vector3.new(5,1,5)
+        part.Position = player.Character.Head.Position + Vector3.new(0,-5,0)
+        part.Anchored = true
+        part.Color = Color3.fromRGB(0,170,255)
+        part.Material = Enum.Material.Neon
+        part.Name = "ZeinyxPart"
+        part.Parent = workspace
+        spawnedPart = part
+    end)
+
+    tpButton.MouseButton1Click:Connect(function()
+        if spawnedPart and spawnedPart.Parent then
+            local character = player.Character or player.CharacterAdded:Wait()
+            character:MoveTo(spawnedPart.Position + Vector3.new(0,3,0))
+        else
+            tpButton.Text = "Aucune Part trouvée !"
+            task.wait(1.5)
+            tpButton.Text = "Se téléporter à la Part"
+        end
+    end)
+end
+
+-- Action du bouton pass
+passButton.MouseButton1Click:Connect(function()
+    if passButton.Text == "Buy" then
+        createHub()
+    else
+        -- Copie le lien du pass
+        if setclipboard then
+            setclipboard(passLink)
+        end
+        passButton.Text = "Lien copié !"
+        task.delay(1.5, function()
+            passButton.Text = "Copier le lien"
+        end)
+    end
+end)
